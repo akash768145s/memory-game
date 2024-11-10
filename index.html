@@ -7,19 +7,17 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="game-container">
-      <h1>Memory Game</h1>
-      <div class="controls">
-        <label for="level-select">Select Level:</label>
-        <select id="level-select">
-          <option value="1">Easy (Level 1)</option>
-          <option value="2">Medium (Level 2)</option>
-        </select>
-        <button id="start-game">Start Game</button>
-      </div>
-      <div class="game-board" id="game-board"></div>
+    <h1>Memory Game</h1>
+
+    <!-- Level selection buttons -->
+    <div id="buttons">
+      <button id="level1">Level 1</button>
+      <button id="level2">Level 2</button>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Game board -->
+    <div id="game-board"></div>
+
+    <script type="module" src="script.js"></script>
   </body>
 </html>

@@ -1,125 +1,83 @@
-/* style.css */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* General styling */
 body {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background: linear-gradient(135deg, #ff6b6b, #f4f4f4);
-    font-family: 'Poppins', sans-serif;
-}
-
-.game-container {
-    text-align: center;
-    width: 100%;
-    max-width: 600px;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
     padding: 20px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
 }
 
 h1 {
-    font-size: 2.5rem;
+    font-size: 2.5em;
     color: #333;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
-.controls {
+/* Level selection buttons */
+#buttons {
+    display: flex;
+    gap: 15px;
     margin-bottom: 20px;
 }
 
-#level-select {
-    padding: 8px 12px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: none;
-    outline: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-button#start-game {
-    padding: 10px 15px;
-    margin-left: 10px;
-    font-size: 1rem;
+#buttons button {
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: bold;
     color: #fff;
-    background-color: #ff6b6b;
+    background-color: #3f51b5;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
-button#start-game:hover {
-    background-color: #d9534f;
+#buttons button:hover {
+    background-color: #303f9f;
+    transform: scale(1.05);
 }
 
-.game-board {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+/* Game board */
+#game-board {
+    grid-template-columns: repeat(4, 100px);
     gap: 15px;
     margin-top: 20px;
+    opacity: 0;
+    /* Initially hidden */
+    transition: opacity 0.5s ease-in;
+    /* Fade-in effect */
 }
 
+/* Tile styling */
 .tile {
-    width: 100%;
-    padding-top: 100%;
-    position: relative;
-    cursor: pointer;
-    perspective: 1000px;
-}
-
-.tile .tile-inner {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 8px;
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-    transition: transform 0.1s;
-    transform-style: preserve-3d;
-}
-
-.tile.revealed .tile-inner {
-    transform: rotateY(180deg);
-}
-
-.tile .tile-front,
-.tile .tile-back {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    width: 100px;
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 2em;
     font-weight: bold;
-    border-radius: 8px;
-    backface-visibility: hidden;
+    color: #333;
+    background-color: #ffeb3b;
+    cursor: pointer;
+    border-radius: 12px;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s, background-color 0.3s;
 }
 
-.tile .tile-front {
-    background-color: #88d3ce;
-    color: #ffffff;
-    transform: rotateY(0deg);
+.tile:hover {
+    transform: scale(1.1);
+    background-color: #ffe082;
 }
 
-.tile .tile-back {
-    background-color: #ff6b6b;
-    color: #ffffff;
-    transform: rotateY(180deg);
-}
-
-.tile:hover .tile-inner {
+.tile.matched {
+    background-color: #66bb6a;
+    color: #fff;
+    cursor: default;
     transform: scale(1.05);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }

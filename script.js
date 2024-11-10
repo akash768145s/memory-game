@@ -1,86 +1,87 @@
-// script.js
+import { tileDistributions } from "./data.js";
 
-async function fetchGameConfig(level) {
-  const url = `https://academy.karky.in:8881/api/games/memory/random/${level}`;
+// Function to set up game with selected tiles
+function setupGame(level) {
+  const selectedData = tileDistributions.find((data) => data.level === level);
+  if (!selectedData) return; // If no data, exit function
 
-  try {
-    const response = await fetch(url);
-    if (response.status === 200) {
-      const data = await response.json();
-      return data;
-    } else {
-      alert("No configuration found for the specified level.");
-    }
-  } catch (error) {
-    console.error("Error fetching game configuration:", error);
-  }
-}
+  const tiles = selectedData.tilesDistribution.concat(
+    selectedData.tilesDistribution
+  ); // Duplicate for matching pairs
+  tiles.sort(() => 0.5 - Math.random()); // Shuffle tiles
 
-document.getElementById("start-game").addEventListener("click", async () => {
-  const level = document.getElementById("level-select").value;
-  const gameConfig = await fetchGameConfig(level);
-
-  if (gameConfig) {
-    const tilesArray = gameConfig.tilesDistribution.split(",");
-    setupGameBoard(tilesArray);
-  }
-});
-
-function setupGameBoard(tilesArray) {
   const gameBoard = document.getElementById("game-board");
-  gameBoard.innerHTML = "";
+  gameBoard.innerHTML = ""; // Clear board
 
-  const doubledTiles = [...tilesArray, ...tilesArray];
-  const shuffledTiles = doubledTiles.sort(() => Math.random() - 0.5);
+  // Show the game board
+  gameBoard.style.display = "grid";
+  gameBoard.style.opacity = "1"; // Set opacity to trigger fade-in
 
-  shuffledTiles.forEach((tileValue) => {
-    const tile = document.createElement("div");
-    tile.classList.add("tile");
-
-    tile.innerHTML = `
-        <div class="tile-inner">
-          <div class="tile-front"></div>
-          <div class="tile-back">${tileValue}</div>
-        </div>
-      `;
-
-    tile.addEventListener("click", () => revealTile(tile));
-    gameBoard.appendChild(tile);
+  // Create tiles
+  tiles.forEach((tile) => {
+    const tileElement = document.createElement("div");
+    tileElement.classList.add("tile");
+    tileElement.dataset.tile = tile;
+    tileElement.innerText = "?"; // Hidden initially
+    tileElement.addEventListener("click", handleTileClick);
+    gameBoard.appendChild(tileElement);
   });
 }
 
-let revealedTiles = [];
-let matchedPairs = 0;
+// Set up variables to track tile matching state
+let firstTile, secondTile;
+let lockBoard = false;
 
-function revealTile(tile) {
-  if (tile.classList.contains("revealed") || revealedTiles.length === 2) return;
+// Handle tile click event
+function handleTileClick() {
+  if (lockBoard) return;
+  if (this === firstTile) return;
 
-  tile.classList.add("revealed");
-  revealedTiles.push(tile);
+  this.innerText = this.dataset.tile;
 
-  if (revealedTiles.length === 2) {
+  if (!firstTile) {
+    firstTile = this;
+  } else {
+    secondTile = this;
     checkForMatch();
   }
 }
 
+// Check if the two selected tiles match
 function checkForMatch() {
-  const [tile1, tile2] = revealedTiles;
+  lockBoard = true;
 
-  if (
-    tile1.querySelector(".tile-back").innerText ===
-    tile2.querySelector(".tile-back").innerText
-  ) {
-    matchedPairs++;
-    revealedTiles = [];
-
-    if (matchedPairs === document.querySelectorAll(".tile").length / 2) {
-      alert("Congratulations! You've won!");
-    }
+  if (firstTile.dataset.tile === secondTile.dataset.tile) {
+    disableTiles();
   } else {
-    setTimeout(() => {
-      tile1.classList.remove("revealed");
-      tile2.classList.remove("revealed");
-      revealedTiles = [];
-    }, 300); // Keep a very short delay to make sure it’s noticeable, but fast
+    unflipTiles();
   }
 }
+
+// Disable matched tiles
+function disableTiles() {
+  firstTile.classList.add("matched");
+  secondTile.classList.add("matched");
+  firstTile.removeEventListener("click", handleTileClick);
+  secondTile.removeEventListener("click", handleTileClick);
+  resetBoard();
+}
+
+// Unflip unmatched tiles
+function unflipTiles() {
+  setTimeout(() => {
+    firstTile.innerText = "?";
+    secondTile.innerText = "?";
+    resetBoard();
+  }, 1000);
+}
+
+// Reset board state after each turn
+function resetBoard() {
+  [firstTile, secondTile] = [null, null];
+  lockBoard = false;
+}
+
+// Add event listeners for level selection buttons
+document.getElementById("level1").addEventListener("click", () => setupGame(1));
+document.getElementById("level2").addEventListener("click", () => setupGame(2));
