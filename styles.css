@@ -1,0 +1,125 @@
+/* style.css */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #ff6b6b, #f4f4f4);
+    font-family: 'Poppins', sans-serif;
+}
+
+.game-container {
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.controls {
+    margin-bottom: 20px;
+}
+
+#level-select {
+    padding: 8px 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+button#start-game {
+    padding: 10px 15px;
+    margin-left: 10px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #ff6b6b;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button#start-game:hover {
+    background-color: #d9534f;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.tile {
+    width: 100%;
+    padding-top: 100%;
+    position: relative;
+    cursor: pointer;
+    perspective: 1000px;
+}
+
+.tile .tile-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 8px;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.1s;
+    transform-style: preserve-3d;
+}
+
+.tile.revealed .tile-inner {
+    transform: rotateY(180deg);
+}
+
+.tile .tile-front,
+.tile .tile-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 8px;
+    backface-visibility: hidden;
+}
+
+.tile .tile-front {
+    background-color: #88d3ce;
+    color: #ffffff;
+    transform: rotateY(0deg);
+}
+
+.tile .tile-back {
+    background-color: #ff6b6b;
+    color: #ffffff;
+    transform: rotateY(180deg);
+}
+
+.tile:hover .tile-inner {
+    transform: scale(1.05);
+}
