@@ -1,9 +1,14 @@
 import { tileDistributions } from "./data.js";
 
+let currentLevel = 1; // Start at Level 1
+let firstTile, secondTile;
+let lockBoard = false;
+let matchedPairs = 0; // Track matched pairs to determine level completion
+
 // Function to set up game with selected tiles
 function setupGame(level) {
   const selectedData = tileDistributions.find((data) => data.level === level);
-  if (!selectedData) return; // If no data, exit function
+  if (!selectedData) return;
 
   const tiles = selectedData.tilesDistribution.concat(
     selectedData.tilesDistribution
@@ -12,12 +17,15 @@ function setupGame(level) {
 
   const gameBoard = document.getElementById("game-board");
   gameBoard.innerHTML = ""; // Clear board
+  gameBoard.style.display = "grid"; // Show the game board
+  gameBoard.style.opacity = "1"; // Fade in
 
-  // Show the game board
-  gameBoard.style.display = "grid";
-  gameBoard.style.opacity = "1"; // Set opacity to trigger fade-in
+  // Reset game variables
+  matchedPairs = 0;
+  [firstTile, secondTile] = [null, null];
+  lockBoard = false;
 
-  // Create tiles
+  // Create and display tiles
   tiles.forEach((tile) => {
     const tileElement = document.createElement("div");
     tileElement.classList.add("tile");
@@ -28,14 +36,9 @@ function setupGame(level) {
   });
 }
 
-// Set up variables to track tile matching state
-let firstTile, secondTile;
-let lockBoard = false;
-
-// Handle tile click event
+// Tile click handler
 function handleTileClick() {
-  if (lockBoard) return;
-  if (this === firstTile) return;
+  if (lockBoard || this === firstTile) return;
 
   this.innerText = this.dataset.tile;
 
@@ -47,7 +50,7 @@ function handleTileClick() {
   }
 }
 
-// Check if the two selected tiles match
+// Match checking
 function checkForMatch() {
   lockBoard = true;
 
@@ -58,16 +61,30 @@ function checkForMatch() {
   }
 }
 
-// Disable matched tiles
 function disableTiles() {
   firstTile.classList.add("matched");
   secondTile.classList.add("matched");
   firstTile.removeEventListener("click", handleTileClick);
   secondTile.removeEventListener("click", handleTileClick);
+
+  matchedPairs++;
+  const tilesInLevel = tileDistributions.find(
+    (data) => data.level === currentLevel
+  ).tilesDistribution.length;
+
+  if (matchedPairs === tilesInLevel) {
+    // All pairs matched for this level
+    if (currentLevel === 1) {
+      currentLevel = 2;
+      setTimeout(() => setupGame(currentLevel), 1000); // Load Level 2
+      showToast("Level 1 Complete! Moving to Level 2...");
+    } else {
+      showToast("Congratulations! Game Over. You've completed all levels.");
+    }
+  }
   resetBoard();
 }
 
-// Unflip unmatched tiles
 function unflipTiles() {
   setTimeout(() => {
     firstTile.innerText = "?";
@@ -76,12 +93,31 @@ function unflipTiles() {
   }, 1000);
 }
 
-// Reset board state after each turn
 function resetBoard() {
   [firstTile, secondTile] = [null, null];
   lockBoard = false;
 }
 
-// Add event listeners for level selection buttons
-document.getElementById("level1").addEventListener("click", () => setupGame(1));
-document.getElementById("level2").addEventListener("click", () => setupGame(2));
+// Toast function to show messages
+function showToast(message) {
+  const toast = document.createElement("div");
+  toast.classList.add("toast");
+  toast.innerText = message;
+  document.body.appendChild(toast);
+
+  // Show the toast
+  setTimeout(() => {
+    toast.classList.add("show");
+  }, 100);
+
+  // Hide the toast after 3 seconds
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => {
+      toast.remove();
+    }, 500); // Clean up after animation
+  }, 3000);
+}
+
+// Initialize game with Level 1 by default
+setupGame(currentLevel);
